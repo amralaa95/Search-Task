@@ -25,7 +25,7 @@ SECRET_KEY = 'f5!tib!0hb70nb^5(lzj$jsmwz!%yv@g)+rwq$l=9j3p2oe@4c'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'sports_api'
 ]
 
 MIDDLEWARE = [
@@ -54,7 +56,7 @@ ROOT_URLCONF = 'search_task.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates"), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -75,11 +77,14 @@ WSGI_APPLICATION = 'search_task.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'djongo',
+        'NAME': 'sports-corpyy',
+        "host": "MONGO DB SERVER IP",
+        "PORT": 27017,
     }
 }
 
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
@@ -118,3 +123,14 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# CONSUMER_KEY = os.environ.get('CONSUMER_KEY')
+# CONSUMER_SECRET = os.environ.get('CONSUMER_SECRET')
+# ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
+# ACCESS_TOKEN_SECRET = os.environ.get('ACCESS_TOKEN_SECRET')
+
+CONSUMER_KEY = 'DAJxuF8xaRVkx48CaZLIK65Zh'
+CONSUMER_SECRET = '6h3bCLNPkusVCyF4WhRPBMfxQJoYEvaOuyd7Lj6AsIQG6Zbi6x'
+ACCESS_TOKEN = '979516170255642626-mJcvmpmI0nxR1oZD2amfKIXAit9HV5j'
+ACCESS_TOKEN_SECRET = 'AwzXXO91l1oEWcP4hHrmRMML9F1o7jLYR0iXik2jXY95G'
