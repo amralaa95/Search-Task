@@ -79,8 +79,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'sports-corpyy',
-        "host": "MONGO DB SERVER IP",
-        "PORT": 27017,
+        'HOST': 'mongodb',
+        'PORT': 27017,
     }
 }
 
@@ -122,13 +122,22 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
+def ABS_DIR(rel):
+    return  os.path.join(BASE_DIR, rel.replace('/', os.path.sep))
+
+
+STATIC_ROOT = ABS_DIR('static-root/')
+
 STATIC_URL = '/static/'
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder'
+)
 
-# CONSUMER_KEY = os.environ.get('CONSUMER_KEY')
-# CONSUMER_SECRET = os.environ.get('CONSUMER_SECRET')
-# ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
-# ACCESS_TOKEN_SECRET = os.environ.get('ACCESS_TOKEN_SECRET')
+STATICFILES_DIRS = (
+    ABS_DIR('static'),
+)
 
 CONSUMER_KEY = 'DAJxuF8xaRVkx48CaZLIK65Zh'
 CONSUMER_SECRET = '6h3bCLNPkusVCyF4WhRPBMfxQJoYEvaOuyd7Lj6AsIQG6Zbi6x'

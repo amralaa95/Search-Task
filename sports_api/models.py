@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from djongo import models
 from django import forms
@@ -23,7 +24,7 @@ class Tweet(models.Model):
     """
     text = models.CharField(max_length=200)
     id_str = models.CharField(max_length=200, primary_key=True)
-    created_at = models.CharField(max_length=200)
+    created_at = models.DateField()
     links = models.ArrayModelField(model_container=Link,model_form_class=LinkForm)
     objects = models.DjongoManager()
 

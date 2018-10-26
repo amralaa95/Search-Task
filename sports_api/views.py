@@ -1,53 +1,53 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render
-from rest_framework.response import Response
-from rest_framework import generics
-from rest_framework import status as status_http
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from django.views.generic import View
 from search_task import settings
-
 import tweepy
 from datetime import datetime
 from .models import Tweet
-from .serializers import TweetSerializer
-from django.core import serializers
 
-# Create your views here.
-
-class SearchResultView(APIView):
+class SearchResultView(View):
     template_name = 'index.html'
-
-    def post(self, request):
-        data = Tweet.objects.filter(text__icontains=request.POST.get('text'))
-        # data = serializers.serialize('json', latest_tweets, ensure_ascii=False)
-        return render(request,self.template_name,data)
     
     def get(self,request):
+        """
+        Function to get first new today tweets from yallakora using Twitter API and
+            add new tweets in mongo db in then retrive result form search text from mongo db.
+        """
         api = twitter_setup()
         latest_tweets = []
-        try:
+        startDate = datetime( datetime.now().year,datetime.now().month,datetime.now().day,0,0,0)
+        try:# there is previous tweets stored in db
             last_tweet_id = Tweet.objects.order_by("-id_str")[0].id_str
             tweets = tweepy.Cursor(api.user_timeline,
                                     screen_name='@Yallakoranow',since_id = last_tweet_id
                                     ).items()
-        except Exception:
+        except:# add tweets to empty db
             tweets = tweepy.Cursor(api.user_timeline,
-                                    screen_name='@Yallakoranow',since = datetime.today().strftime('%Y-%m-%d')
-                                    ).items(1)
-        for status in tweets:
-            tweet = {'text': status._json['text'],
-                     'id_str': status._json['id_str'],
-                     'created_at': status._json['created_at'],'links':[]}
-            if 'media' in status._json['entities'].keys():
-                for curr_media in status._json['entities']['media'] :
+                                    screen_name='@Yallakoranow').items()
+
+        for status in tweets: # add only today tweets
+            if status.created_at < startDate:
+                break
+            # curr_date = datetime.combine(status.created_at,datetime.min.time())
+            tweet = {'text': status.text[0:status.text.index('https')],
+                     'id_str': status.id_str,
+                     'created_at': status.created_at,
+                     'links':[]}
+            if 'media' in status.entities.keys():
+                for curr_media in status.entities['media'] :
                     tweet['links'].append({'link_url':curr_media['media_url_https']})
 
             latest_tweets.append(tweet)
 
         if latest_tweets:
             Tweet.objects.mongo_insert_many(latest_tweets)
-    
-        return render(request,self.template_name)            
+
+        try: # retrive search result from text
+            res = Tweet.objects.filter(text__icontains=request.GET.get('text'))
+        except:
+            res = {}
+        return render(request,self.template_name,{'res':res})
 
 def twitter_setup():
     """

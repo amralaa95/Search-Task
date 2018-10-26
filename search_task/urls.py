@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """search_task URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -18,5 +20,5 @@ from django.conf.urls import url,include
 
 urlpatterns = [
     url('admin/', admin.site.urls),
-    url(r'^api/', include('sports_api.urls')),
+    url(r'^', include(('sports_api.urls','sports_api'), namespace='sports_api')),
 ]
