@@ -29,8 +29,11 @@ class SearchResultView(View):
         for status in tweets: # add only today tweets
             if status.created_at < startDate:
                 break
-            # curr_date = datetime.combine(status.created_at,datetime.min.time())
-            tweet = {'text': status.text[0:status.text.index('https')],
+            try:
+                text = status.text[0:status.text.index('https')] 
+            except:
+                text = status.text
+            tweet = {'text': text,
                      'id_str': status.id_str,
                      'created_at': status.created_at,
                      'links':[]}
